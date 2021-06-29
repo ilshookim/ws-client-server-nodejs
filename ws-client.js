@@ -43,7 +43,7 @@ async function connectAll(total) {
   } else {
     const port = setBasePort;
     for (i=0; i<total; i++) {
-      connect(port);
+      await connect(port);
     }
   }
 }
