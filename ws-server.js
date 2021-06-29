@@ -83,10 +83,10 @@ async function portAll(total) {
 
 function timerAll(total) {
   var count = total;
-  while (count-- > 0) timers.push(setInterval(write, cfgInterval));
+  while (count-- > 0) timers.push(setInterval(timerSend, cfgInterval));
 }
 
-async function write() {
+async function timerSend() {
   const KEY = 0;
   const VALUE = 1;
   for (let obj of payloads) {
