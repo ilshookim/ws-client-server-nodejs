@@ -5,7 +5,7 @@ const Day = require('dayjs');
 
 const cfgMultiport = false;
 const cfgTimers = false;
-const cfgEcho = false;
+const cfgEcho = true;
 const cfg100KB = false;
 const cfgInterval = 1; // ms
 
@@ -57,7 +57,7 @@ async function portAll(total) {
         payload.ts2 = `${ts2}`;
         const ts1 = payload.ts1;
         const dur = ts2 - ts1;
-        console.log(`received: dur=${dur} ms, sid=${sid}, length=${received.length}`);
+        // console.log(`received: dur=${dur} ms, sid=${sid}, length=${received.length}`);
 
         if (cfgTimers) {
           payloads.set(ws, payload);
@@ -74,7 +74,7 @@ async function portAll(total) {
           const ts1 = payload.ts1;
           const latency = ts3 - ts1;
           const sid = payload.sid;
-          console.log(`echo: latency=${latency} ms, sid=${sid}, length=${sent.length}`);
+        //   console.log(`echo: latency=${latency} ms, sid=${sid}, length=${sent.length}`);
         }
       });
     });

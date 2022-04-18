@@ -35,6 +35,12 @@ const rl = readline.createInterface({
 
 /// functions
 
+function bytesLength(obj) {
+  if (!obj) return 0;
+  const bytesLength = Buffer.byteLength(obj === Object(obj) ? JSON.stringify(obj) : obj);
+  return bytesLength;
+}
+
 async function connectAll(total) {
   if (cfgMultiport) {
     for (port=setBasePort; port<setBasePort+total; port++) {
@@ -49,7 +55,7 @@ async function connectAll(total) {
 }
 
 async function connect(port) {
-  const ws = new WebSocket(`ws://localhost:${port}`);
+  const ws = new WebSocket(`ws://localhost:${port}/ws`);
 
   ws.on('close', async function close() {
       const cid = connections.get(ws);
@@ -72,16 +78,23 @@ async function connect(port) {
   ws.on('message', async function incoming(message) {
       const ts4 = Day().valueOf();
       const payload = JSON.parse(message);
-      const ts1 = payload.ts1;
-      const ts2 = payload.ts2;
-      const ts3 = payload.ts3;
-  
-      const total = ts4 - ts1;
-      const sent = ts2 - ts1;
-      const proxy = ts3 - ts2;
-      const received = ts4 - ts3;
-      console.log(`received: total=${total} ms (sent=${sent} ms, proxy=${proxy} ms, received=${received} ms)`);
-  });
+      // if (payload.ts2) {
+        const ts1 = payload.ts1;
+        const ts2 = payload.ts2;
+        const ts3 = payload.ts3;
+    
+        const total = ts4 - ts1;
+        const sent = ts2 - ts1;
+        const proxy = ts3 - ts2;
+        const received = ts4 - ts3;
+        console.log(`received: total=${total} ms (sent=${sent} ms, proxy=${proxy} ms, received=${received} ms)`);
+      // } else if (payload.ts1) {
+      //   const total = ts4 - payload.ts1;
+      //   console.log(`received: total=${total} ms`);
+      // } else {
+      //   console.log(`received: bytes=${bytesLength(message)}`);
+      // }
+    });
 }
 
 async function sendAll() {
@@ -110,7 +123,8 @@ async function sendAll() {
 
 async function sendWS(ws, cid) {
     const ts1 = Day().valueOf();
-    const payload = { cid: `${cid}`, data: data10KB(), ts1: `${ts1}` };
+    const payload = { cid: `${cid}`, data: data10KB() };
+    if (true) payload.ts1 = `${ts1}`;
     if (cfg100KB) {
       payload.small = [];
       for (i=1; i<10; i++) payload.small.push(data10KB());
